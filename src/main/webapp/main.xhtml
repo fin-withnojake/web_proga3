@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+>
+<h:head>
+    <meta charset="utf-8" />
+    <title>Hehe-web3</title>
+    <h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+    <header class="header">
+        <div class="left_header">
+            <h2>Лабораторная работа №3</h2>
+            <h:link value="Стартовая страница" outcome="welcome" class="a" />
+        </div>
+        <div class="right_header">
+            Колодей Елизавета Владимировна
+            <br />
+            <strong>Группа:</strong> P3207<br /> <strong>Вариант:</strong> 361927
+        </div>
+    </header>
+
+    <h:form>
+        <div class="container">
+            <div class="graph-block">
+                <div class="R">
+                    <h:outputLabel value="Радиус R: " for="rSlider" />
+                    <h:inputText id="rInput" value="#{pointBean.newPoint.r}" styleClass="custom-input" style="width: 60px;">
+                        <f:validateDoubleRange minimum="2" maximum="5"/>
+                    </h:inputText>
+                    <p:slider id="rSlider" for="rInput" minValue="2" maxValue="5" step="0.1" style="width: 200px;"/>
+                    <h:message for="rInput" />
+                </div>
+                <p:outputPanel id="canvasBlock">
+                    <br/>
+                    <canvas id="canvas" width="380" height="380" style="border: 0px solid #ccc" />
+                </p:outputPanel>
+            </div>
+            <div class="text-block">
+                <h3>Попади в область!</h3>
+                <div class="X">
+                    <h:outputLabel value="Координата X: " for="xSpinner"/>
+                    <p:spinner id="xSpinner"
+                               value="#{pointBean.newPoint.x}"
+                               min="-3" max="3" stepFactor="1"
+                               styleClass="custom-input"/>
+                    <h:message for="xSpinner" />
+                </div>
+                <div class="Y">
+                    <h:outputLabel value="Координата Y: " for="Y" />
+                    <h:inputText
+                            id="Y"
+                            value="#{pointBean.newPoint.y}"
+                            required="true"
+                            styleClass="custom-input">
+                        <f:convertNumber locale="en_US" />
+                        <f:validateDoubleRange minimum="-3" maximum="3"/>
+                    </h:inputText>
+                    <h:message for="Y" id="yMsg"/>
+                </div>
+                <h:commandButton id="query1"
+                                 action="#{pointBean.addPoint}"
+                                 value="Показать точку"
+                                 class="query">
+                    <f:ajax execute="xSpinner Y rInput" render=":tableBlock yMsg"/>
+                </h:commandButton>
+                <h:commandButton
+                        id="query2"
+                        action="#{pointBean.clearData}"
+                        value="Очистить данные"
+                        class="query query2"
+                >
+                    <f:ajax render=":tableBlock"/>
+                </h:commandButton>
+
+            </div>
+        </div>
+    </h:form>
+    <p:outputPanel id="tableBlock">
+        <h3 class="tb_header">История запросов</h3>
+        <table id="table">
+            <thead>
+            <tr>
+                <th style="width: 13%">Радиус R</th>
+                <th style="width: 13%">Коорд. X</th>
+                <th style="width: 13%">Коорд. Y</th>
+                <th style="width: 14%">Статус</th>
+                <th style="width: 22%">Дата и время</th>
+                <th style="width: 27%">Продолжительность обработки</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ui:repeat value="#{pointBean.points}" var="point">
+                <tr>
+                    <td>#{point.r}</td>
+                    <td>#{point.x}</td>
+                    <td>#{point.y}</td>
+                    <td>#{point.result ? 'Попадание' : 'Промах'}</td>
+                    <td>#{point.date}</td>
+                    <td>#{point.nano} ns</td>
+                </tr>
+            </ui:repeat>
+            </tbody>
+        </table>
+    </p:outputPanel>
+    <script type="module" src="resources/js/script.js"></script>
+</h:body>
+</html>
